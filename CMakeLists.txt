@@ -28,8 +28,8 @@ set(ZUPDATER_SOURCES
     src/ZDownloader.ui
 )
 
-# Create the dynamic library
-add_library(ZUpdater SHARED ${ZUPDATER_SOURCES})
+# Create the static library
+add_library(ZUpdater STATIC ${ZUPDATER_SOURCES})
 
 # Set library properties
 set_target_properties(ZUpdater PROPERTIES
