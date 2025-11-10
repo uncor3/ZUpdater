@@ -58,44 +58,47 @@ target_include_directories(ZUpdater
 # Compiler definitions for building shared library
 target_compile_definitions(ZUpdater PRIVATE ZUPDATER_LIBRARY)
 
-# Install rules
-include(GNUInstallDirs)
+# Only run install rules if this is the main project being built
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    # Install rules
+    include(GNUInstallDirs)
 
-install(TARGETS ZUpdater
-    EXPORT ZUpdaterTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ZUpdater
-)
+    install(TARGETS ZUpdater
+        EXPORT ZUpdaterTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ZUpdater
+    )
 
-# Install export targets
-install(EXPORT ZUpdaterTargets
-    FILE ZUpdaterTargets.cmake
-    NAMESPACE ZUpdater::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ZUpdater
-)
+    # Install export targets
+    install(EXPORT ZUpdaterTargets
+        FILE ZUpdaterTargets.cmake
+        NAMESPACE ZUpdater::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ZUpdater
+    )
 
-# Create config file
-include(CMakePackageConfigHelpers)
+    # Create config file
+    include(CMakePackageConfigHelpers)
 
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ZUpdaterConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfig.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ZUpdater
-)
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ZUpdaterConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfig.cmake"
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ZUpdater
+    )
 
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
 
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ZUpdater
-)
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/ZUpdaterConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ZUpdater
+    )
+endif()
 
 # Optional: Build example if requested
 option(BUILD_ZUPDATER_EXAMPLES "Build ZUpdater examples" OFF)
