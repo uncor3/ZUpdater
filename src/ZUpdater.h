@@ -51,6 +51,7 @@ public:
     void setCheckingMessage(const QString &msg);
     void setErrorMessage(const QString &msg);
     void setDownloadPromptMessage(const QString &msg);
+    void setPackageManagerManagedMessage(const QString &msg);
 
     // Platform/Architecture info getters
     Platform::Type platform() const { return m_platform; }
@@ -89,4 +90,7 @@ private:
     QString m_checkingMsg;
     QString m_errorMsg;
     QString m_downloadPromptMsg;
+
+    QString m_packageManagerManagedMsg =
+        "A new version is available. Please update using your package manager.";
 };

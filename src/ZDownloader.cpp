@@ -194,7 +194,6 @@ void ZDownloader::installUpdate()
     box.setIcon(QMessageBox::Question);
     box.setDefaultButton(QMessageBox::Ok);
     box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    qDebug() << "TText:" << m_updateProcedure.boxInformativeText;
     box.setInformativeText(m_updateProcedure.boxInformativeText);
 
     QString text = m_updateProcedure.boxText;

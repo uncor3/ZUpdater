@@ -177,53 +177,29 @@ void ZUpdater::checkUpdatesInternal(QJsonDocument jsonDoc)
 
     // Linux scenario
     if (m_platform == Platform::Linux) {
-        if (!m_isPackageManagerManaged) {
-            QJsonObject obj = getMatchingAsset(assetPattern, asset.toArray());
+        if (m_isPackageManagerManaged)
+            return showPackageManagerManagedUpdateMessage(latestVersionObj);
 
-            if (obj.isEmpty()) {
-                qWarning()
-                    << "No matching asset found for the platform/architecture";
-                return;
-            }
-            QVariantMap downloadProfile;
-            downloadProfile["body"] =
-                latestVersionObj.value("body").toString().replace("\n",
-                                                                  "<br/>");
-            downloadProfile["tag_name"] =
-                latestVersionObj.value("tag_name").toString();
-            downloadProfile["browser_download_url"] =
-                obj.value("browser_download_url").toString();
-            downloadProfile["file_name"] = obj.value("name").toString();
+        QJsonObject obj = getMatchingAsset(assetPattern, asset.toArray());
 
-            qDebug() << "Download url:"
-                     << obj.value("browser_download_url").toString();
-
-            return showDownloadMessageBox(downloadProfile);
+        if (obj.isEmpty()) {
+            qWarning()
+                << "No matching asset found for the platform/architecture";
+            return;
         }
-        QString changeLog =
+        QVariantMap downloadProfile;
+        downloadProfile["body"] =
             latestVersionObj.value("body").toString().replace("\n", "<br/>");
-        QString version = latestVersionObj.value("tag_name").toString();
-        QString htmlUrl = latestVersionObj.value("html_url").toString();
+        downloadProfile["tag_name"] =
+            latestVersionObj.value("tag_name").toString();
+        downloadProfile["browser_download_url"] =
+            obj.value("browser_download_url").toString();
+        downloadProfile["file_name"] = obj.value("name").toString();
 
-        QMessageBox box;
-        box.setTextFormat(Qt::RichText);
-        box.setIcon(QMessageBox::Information);
-        box.setStandardButtons(QMessageBox::Ok);
+        qDebug() << "Download url:"
+                 << obj.value("browser_download_url").toString();
 
-        QString title =
-            "<h3>" + tr("Version %1 is available!").arg(version) + "</h3>";
-        QString text =
-            tr("A new version is available. Please update using your "
-               "package manager.");
-
-        if (!changeLog.isEmpty()) {
-            text += "<br/><br/><strong>Change log:</strong><br/>" + changeLog;
-        }
-
-        box.setText(title);
-        box.setInformativeText(text);
-        box.exec();
-        return;
+        return showDownloadMessageBox(downloadProfile);
     }
 
     // Windows and macOS scenario
@@ -262,16 +238,15 @@ void ZUpdater::showPackageManagerManagedUpdateMessage(const QJsonObject &obj)
     box.setStandardButtons(QMessageBox::Ok);
 
     QString title =
-        "<h3>" + tr("Version %1 is available!").arg(version) + "</h3>";
-    QString text = tr("A new version is available. Please update using your "
-                      "package manager.");
+        "<h3>" + QString("Version %1 is available!").arg(version) + "</h3>";
 
     if (!changeLog.isEmpty()) {
-        text += "<br/><br/><strong>Change log:</strong><br/>" + changeLog;
+        m_packageManagerManagedMsg +=
+            "<br/><br/><strong>Change log:</strong><br/>" + changeLog;
     }
 
     box.setText(title);
-    box.setInformativeText(text);
+    box.setInformativeText(m_packageManagerManagedMsg);
     box.exec();
     return;
 }
@@ -408,4 +383,9 @@ void ZUpdater::download(const QVariantMap &downloadProfile)
     downloader->setFileName(name);
     downloader->show();
     downloader->startDownload(url);
+}
+
+void ZUpdater::setPackageManagerManagedMessage(const QString &msg)
+{
+    m_packageManagerManagedMsg = msg;
 }
