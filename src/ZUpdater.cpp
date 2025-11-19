@@ -245,14 +245,13 @@ void ZUpdater::showPackageManagerManagedUpdateMessage(const QJsonObject &obj)
 
     QString title =
         "<h3>" + QString("Version %1 is available!").arg(version) + "</h3>";
-
+    QString infoText = m_packageManagerManagedMsg;
     if (!changeLog.isEmpty()) {
-        m_packageManagerManagedMsg +=
-            "<br/><br/><strong>Change log:</strong><br/>" + changeLog;
+        infoText += "<br/><br/><strong>Change log:</strong><br/>" + changeLog;
     }
 
     box.setText(title);
-    box.setInformativeText(m_packageManagerManagedMsg);
+    box.setInformativeText(infoText);
     box.exec();
     return;
 }
